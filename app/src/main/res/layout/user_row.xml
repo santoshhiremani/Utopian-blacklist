@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/cardview_default_elevation"
+    android:paddingLeft="@dimen/cardview_default_elevation"
+    android:paddingRight="@dimen/cardview_default_elevation"
+    android:paddingTop="@dimen/cardview_default_elevation">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/coverImage"
+                    android:src="@drawable/ic_view_list_black_24dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp" />
+
+                <TextView
+                    android:id="@+id/user_name"
+                    android:text="Android Name"
+                    android:textSize="20sp"
+                    android:layout_marginTop="4dp"
+                    android:maxLines="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/coverImage"
+                    android:layout_toEndOf="@+id/coverImage"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginStart="12dp" />
+
+                <TextView
+                    android:id="@+id/textPeriod"
+                    android:text=""
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/user_name"
+                    android:layout_alignLeft="@+id/user_name"
+                    android:layout_alignStart="@+id/user_name" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+</LinearLayout>

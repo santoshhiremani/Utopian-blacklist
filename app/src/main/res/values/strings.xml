@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Utopian Blacklist</string>
+    <string name="title_find">Find</string>
+    <string name="title_list">List</string>
+
+    <string name="utopian_ban"><u>Utopian Ban Details</u></string>
+
+    <string name="other_ban"><u>Global Blacklist</u></string>
+
+    <string name="search_button">Check Ban Status</string>
+</resources>
