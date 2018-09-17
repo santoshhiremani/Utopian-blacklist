@@ -51,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        // for showing the default fragment in the FrameLayout
+        FragmentSearch importFragment = new FragmentSearch();
+        switchFragment(importFragment);
 
 
         /*Create handle for the RetrofitInstance interface*/
