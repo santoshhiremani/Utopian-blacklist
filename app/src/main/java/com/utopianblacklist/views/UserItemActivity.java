@@ -1,5 +1,6 @@
 package com.utopianblacklist.views;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -56,7 +57,16 @@ public class UserItemActivity extends AppCompatActivity {
         bindViews(intent);
     }
 
+    /**
+     * @param intent
+     */
     private void bindViews(Intent intent) {
+
+        final ProgressDialog pDialog = new ProgressDialog(UserItemActivity.this); //Your Activity.this
+        pDialog.setMessage("Checking...!");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
         String userName =  intent.getStringExtra("user_name");
         String banLength = intent.getStringExtra("ban_length");
         long banStart = intent.getLongExtra("ban_start",0);
@@ -73,18 +83,22 @@ public class UserItemActivity extends AppCompatActivity {
         call.enqueue(new Callback<Blacklisted>() {
             @Override
             public void onResponse(Call<Blacklisted> call, Response<Blacklisted> response) {
-                //    progressDoalog.dismiss();
                 txtBlackList.setText(convertToCommaSeparated(response.body().getBlacklisted()));
+                pDialog.hide();
             }
 
             @Override
             public void onFailure(Call<Blacklisted> call, Throwable t) {
-                //progressDoalog.dismiss();
                 Toast.makeText(mContext, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+                pDialog.hide();
             }
         });
     }
 
+    /**
+     * @param unixSeconds
+     * @return
+     */
     public String formatDateAsUTC(long unixSeconds) {
         String num = String.valueOf(unixSeconds);
         // convert seconds to milliseconds
@@ -97,6 +111,10 @@ public class UserItemActivity extends AppCompatActivity {
         return  formattedDate;
     }
 
+    /**
+     * @param strings
+     * @return
+     */
     public static String convertToCommaSeparated(String[] strings) {
         StringBuffer sb = new StringBuffer("");
         for (int i = 0; strings != null && i < strings.length; i++) {
@@ -108,7 +126,10 @@ public class UserItemActivity extends AppCompatActivity {
         return sb.toString();
     }
 
-    //getting back to listview
+    /**
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -117,6 +138,10 @@ public class UserItemActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
 
     }
+
+    /**
+     * Back press
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed();

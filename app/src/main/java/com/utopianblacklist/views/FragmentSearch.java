@@ -1,5 +1,6 @@
 package com.utopianblacklist.views;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,6 +17,8 @@ import com.utopianblacklist.objects.Blacklisted;
 import com.utopianblacklist.services.GetDataService;
 import com.utopianblocklist.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -62,45 +65,65 @@ public class FragmentSearch extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-         /*Create handle for the RetrofitInstance interface*/
-        GetDataService serviceUtopian = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
-        Call<List<BannerUsers>> callUtopian = serviceUtopian.getBanStatusOfUser(searchUser.getText().toString());
+        final ProgressDialog pDialog = new ProgressDialog(getActivity()); //Your Activity.this
+        pDialog.setMessage("Checking...!");
+        pDialog.setCancelable(false);
+
+        if (searchUser.getText().toString().matches("")) {
+            Toast.makeText(getActivity(), "You did not enter a username", Toast.LENGTH_SHORT).show();
+            return;
+        }else{
+            pDialog.show();
+            /*Create handle for the RetrofitInstance interface*/
+            GetDataService serviceUtopian = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
+            Call<List<BannerUsers>> callUtopian = serviceUtopian.getBanStatusOfUser(searchUser.getText().toString());
 
 
-        callUtopian.enqueue(new Callback<List<BannerUsers>>() {
-            @Override
-            public void onResponse(Call<List<BannerUsers>> call, Response<List<BannerUsers>> response) {
-                //    progressDoalog.dismiss();
-                System.out.println(response.body());
-            }
+            callUtopian.enqueue(new Callback<List<BannerUsers>>() {
+                @Override
+                public void onResponse(Call<List<BannerUsers>> call, Response<List<BannerUsers>> response) {
+                    //    progressDoalog.dismiss();
+                    if(response.body().size()>0){
+                        txtUtopian.setVisibility(View.VISIBLE);
+                        txtBanPeriod.setText("Banned for:         "+response.body().get(0).getBan_length()+" Days");
+                        txtBanSince.setText("Banned Since:    "+formatDateAsUTC(response.body().get(0).getBan_start().get$date()));
+                        txtBanUntil.setText("Banned Until:      "+formatDateAsUTC(response.body().get(0).getBanned_until().get$date()));
+                    }
+                    pDialog.hide();
+                }
 
-            @Override
-            public void onFailure(Call<List<BannerUsers>> call, Throwable t) {
-                //progressDoalog.dismiss();
-                Toast.makeText(getActivity(), "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<List<BannerUsers>> call, Throwable t) {
+                    //progressDoalog.dismiss();
+                    pDialog.show();
+                    Toast.makeText(getActivity(), "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+                }
+            });
 
-        GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
-        Call<Blacklisted> call = service.getBlackList("http://blacklist.usesteem.com/user/"+searchUser.getText().toString());
+            GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
+            Call<Blacklisted> call = service.getBlackList("http://blacklist.usesteem.com/user/"+searchUser.getText().toString());
 
-        call.enqueue(new Callback<Blacklisted>() {
-            @Override
-            public void onResponse(Call<Blacklisted> call, Response<Blacklisted> response) {
-                //    progressDoalog.dismiss();
-                txtGlobal.setVisibility(View.VISIBLE);
-                txtUtopian.setVisibility(View.INVISIBLE);
-                txtGlobal.setText(convertToCommaSeparated(response.body().getBlacklisted()));
-            }
+            call.enqueue(new Callback<Blacklisted>() {
+                @Override
+                public void onResponse(Call<Blacklisted> call, Response<Blacklisted> response) {
+                    //    progressDoalog.dismiss();
+                    txtGlobal.setVisibility(View.VISIBLE);
+                    txtBlackList.setText(convertToCommaSeparated(response.body().getBlacklisted()));
+                }
 
-            @Override
-            public void onFailure(Call<Blacklisted> call, Throwable t) {
-                //progressDoalog.dismiss();
-                Toast.makeText(getActivity(), "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<Blacklisted> call, Throwable t) {
+                    //progressDoalog.dismiss();
+                    Toast.makeText(getActivity(), "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
+    /**
+     * @param strings
+     * @return
+     */
     public static String convertToCommaSeparated(String[] strings) {
         StringBuffer sb = new StringBuffer("");
         for (int i = 0; strings != null && i < strings.length; i++) {
@@ -110,5 +133,21 @@ public class FragmentSearch extends Fragment implements View.OnClickListener {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * @param unixSeconds
+     * @return
+     */
+    public String formatDateAsUTC(long unixSeconds) {
+        String num = String.valueOf(unixSeconds);
+        // convert seconds to milliseconds
+        Date date = new java.util.Date(Long.valueOf(num.substring(0, 10))*1000L);
+        // the format of your date
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        // give a timezone reference for formatting (see comment at the bottom)
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+        String formattedDate = sdf.format(date);
+        return  formattedDate;
     }
 }

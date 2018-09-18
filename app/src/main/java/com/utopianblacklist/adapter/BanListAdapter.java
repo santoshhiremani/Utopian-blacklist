@@ -53,6 +53,11 @@ public class BanListAdapter extends RecyclerView.Adapter<BanListAdapter.CustomVi
         }
     }
 
+    /**
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
@@ -60,6 +65,10 @@ public class BanListAdapter extends RecyclerView.Adapter<BanListAdapter.CustomVi
         return new CustomViewHolder(view);
     }
 
+    /**
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         holder.txtTitle.setText(dataList.get(position).getName());
@@ -75,6 +84,10 @@ public class BanListAdapter extends RecyclerView.Adapter<BanListAdapter.CustomVi
 
     }
 
+    /**
+     * @param unixSeconds
+     * @return
+     */
     public String formatDateAsUTC(long unixSeconds) {
         String num = String.valueOf(unixSeconds);
         // convert seconds to milliseconds

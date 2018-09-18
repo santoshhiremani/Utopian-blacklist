@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * @param fragment
+     */
     private void switchFragment(Fragment fragment) {
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
@@ -54,24 +57,6 @@ public class MainActivity extends AppCompatActivity {
         // for showing the default fragment in the FrameLayout
         FragmentSearch importFragment = new FragmentSearch();
         switchFragment(importFragment);
-
-
-        /*Create handle for the RetrofitInstance interface*/
-       /* GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
-        Call<List<BannerUsers>> call = service.getAllBannedUsers();
-        call.enqueue(new Callback<List<BannerUsers>>() {
-            @Override
-            public void onResponse(Call<List<BannerUsers>> call, Response<List<BannerUsers>> response) {
-            //    progressDoalog.dismiss();
-                generateDataList(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<List<BannerUsers>> call, Throwable t) {
-                //progressDoalog.dismiss();
-                Toast.makeText(MainActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
-            }
-        });*/
     }
 
 }

@@ -1,5 +1,6 @@
 package com.utopianblacklist.views;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -42,27 +43,35 @@ public class FragmentBannedList extends Fragment {
         return view;
     }
 
+    /**
+     * get Banned list
+     */
     private void getBannedList() {
+        final ProgressDialog pDialog = new ProgressDialog(getActivity()); //Your Activity.this
+        pDialog.setMessage("Loading...!");
+        pDialog.setCancelable(false);
+        pDialog.show();
         /*Create handle for the RetrofitInstance interface*/
         GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
         Call<List<BannerUsers>> call = service.getAllBannedUsers();
         call.enqueue(new Callback<List<BannerUsers>>() {
             @Override
             public void onResponse(Call<List<BannerUsers>> call, Response<List<BannerUsers>> response) {
-            //    progressDoalog.dismiss();
-                generateDataList(response.body());
+                generateBlacklistList(response.body());
+                pDialog.hide();
             }
 
             @Override
             public void onFailure(Call<List<BannerUsers>> call, Throwable t) {
                 //progressDoalog.dismiss();
                 Toast.makeText(getActivity(), "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+                pDialog.hide();
             }
         });
     }
 
     /*Method to generate List of data using RecyclerView with custom adapter*/
-    private void generateDataList(final List<BannerUsers> usersList) {
+    private void generateBlacklistList(final List<BannerUsers> usersList) {
 
         adapter = new BanListAdapter(getActivity(), usersList, new CustomItemClickListener() {
             @Override
